@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
 {
     [Header("Has Game Started")]
     [SerializeField]private bool gameStarted;
+    private bool pauseGame;
     [Space]
     [Header("List of all object")]
     [Tooltip("Drop All Prefab Object Here !")]public GameObject[] allObject;
@@ -57,7 +58,7 @@ public class GameManager : MonoBehaviour
     //Action for creating new object
     public void OnCreateObject(InputAction.CallbackContext ctx)
     {
-        if(!gameStarted)return;
+        if(!gameStarted || pauseGame)return;
         if(ctx.performed && !selected)
         {
             //read name of input and convert into index
@@ -70,7 +71,7 @@ public class GameManager : MonoBehaviour
     //Action for reselecting/placing object
     public void OnLeftClickInteraction(InputAction.CallbackContext ctx)
     {
-        if(!gameStarted)return;
+        if(!gameStarted || pauseGame)return;
         if(ctx.performed)
         {
             //Reselect object
@@ -89,6 +90,7 @@ public class GameManager : MonoBehaviour
                     }
                     currentObject = placedObject.Find(x => x == hittedObject);
                     selected = true;
+                    AudioManager.instance.PlaySFX("SFX_Click");
                     SetAlreadyPlacedObject(currentObject.transform.position, currentObject.transform.rotation, true);
                     droppableObject = currentObject.GetComponentInChildren<DroppableObject>(true);
                     droppableObject.enabled = true;
@@ -114,6 +116,7 @@ public class GameManager : MonoBehaviour
                 droppableObject.gameObject.layer = 0;
                 matIndex = 0;
                 ResetDroppable();
+                AudioManager.instance.PlaySFX("SFX_Place");
                 if(alreadyPlacedObject.wasAlreadyPlaced)ResetAlreadyPlacedObject();
                 ResetVariable();
             }
@@ -123,7 +126,7 @@ public class GameManager : MonoBehaviour
     //Action for changing object's material
     public void OnRightClickInteraction(InputAction.CallbackContext ctx)
     {
-        if(!gameStarted)return;
+        if(!gameStarted || pauseGame)return;
         if(ctx.performed)
         {
             if(!selected || currentObject == null)return;
@@ -140,7 +143,7 @@ public class GameManager : MonoBehaviour
     //Action for deleting selected object
     public void OnDeleteObject(InputAction.CallbackContext ctx)
     {
-        if(!gameStarted)return;
+        if(!gameStarted || pauseGame)return;
         if(ctx.performed)
         {
             if(!selected || currentObject == null)return;
@@ -151,7 +154,7 @@ public class GameManager : MonoBehaviour
     //Action for rotating object
     public void OnRotateObject(InputAction.CallbackContext ctx)
     {
-        if(!gameStarted)return;
+        if(!gameStarted || pauseGame)return;
         if(ctx.performed)
         {
             if(!selected || currentObject == null)return;
@@ -179,7 +182,7 @@ public class GameManager : MonoBehaviour
     //Action for rotating ground
     public void OnRotateGround(InputAction.CallbackContext ctx)
     {
-        if(!gameStarted)return;
+        if(!gameStarted || pauseGame)return;
         if(ctx.performed)
         {
             Vector2 rotateDir = ctx.ReadValue<Vector2>();
@@ -196,7 +199,7 @@ public class GameManager : MonoBehaviour
     //Action for changing type of rotation (Left/Right to Up/Down Rotation)
     public void OnChangeRotationType(InputAction.CallbackContext ctx)
     {
-        if(!gameStarted)return;
+        if(!gameStarted || pauseGame)return;
         if(ctx.performed)
         {
             if(!selected || currentObject == null)return;
@@ -207,7 +210,7 @@ public class GameManager : MonoBehaviour
     //Action for selecting object
     public void OnCancelSelection(InputAction.CallbackContext ctx)
     {
-        if(!gameStarted)return;
+        if(!gameStarted || pauseGame)return;
         if(ctx.performed)
         {
             if(!selected || currentObject == null)return;
@@ -217,7 +220,8 @@ public class GameManager : MonoBehaviour
             {
                 currentObject.transform.position = alreadyPlacedObject.initialPos;
                 currentObject.transform.rotation = alreadyPlacedObject.initialRot;
-
+                
+                AudioManager.instance.PlaySFX("SFX_UI_Back");
                 //droppableObject.GetComponent<Collider>().enabled = true;
                 
                 StopCoroutine(MoveObject());
@@ -236,7 +240,7 @@ public class GameManager : MonoBehaviour
     //Action for moving object up
     public void OnMovingObjectUp(InputAction.CallbackContext ctx)
     {
-        if(!gameStarted)return;
+        if(!gameStarted || pauseGame)return;
         if(ctx.performed)
         {
             Collider collider = droppableObject?.GetComponent<Collider>();
@@ -272,6 +276,7 @@ public class GameManager : MonoBehaviour
         currentObject.transform.position += new Vector3(0f, droppableObject.GetComponent<Collider>().bounds.extents.y, 0f);
         droppableObject.Droppable(true, Color.green);
         matIndex = 0;
+        AudioManager.instance.PlaySFX("SFX_Pop");
         StartCoroutine(MoveObject());
     }
 
@@ -307,6 +312,8 @@ public class GameManager : MonoBehaviour
         Destroy(currentObject);
         ResetVariable();
         if(alreadyPlacedObject.wasAlreadyPlaced)ResetAlreadyPlacedObject();
+        int random = Random.Range(0, 4) + 1;
+        AudioManager.instance.PlaySFX($"SFX_Explosion_{random}");
         StopCoroutine(MoveObject());
     }
 
@@ -401,15 +408,18 @@ public class GameManager : MonoBehaviour
     //In Game Quit + Cancel
     public void InGameExitPannel()
     {
+        if(selected && currentObject != null)return;
         if(inGameExitUI.activeSelf)
         {
             AudioManager.instance.PlaySFX("SFX_UI_Back");
             inGameExitUI.SetActive(false);
+            pauseGame = false;
         }
         else
         {
             AudioManager.instance.PlaySFX("SFX_UI_Validate");
             inGameExitUI.SetActive(true);
+            pauseGame = true;
         }
     }
 

@@ -58,7 +58,9 @@ public class AudioManager : MonoBehaviour
 
     public void PlaySFX(string audioName)
     {
-        PlayClipAt(this.allAudio[audioName], this.transform.position, soundEffectMixer, true, false);
+        float randomPitch = Random.Range(.89f, 1.10f);
+        AudioSource audio = PlayClipAt(this.allAudio[audioName], this.transform.position, soundEffectMixer, true, false);
+        audio.pitch = randomPitch;
     }
 
 

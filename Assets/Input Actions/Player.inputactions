@@ -69,18 +69,18 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "CancelSelection",
+                    "name": "InGameExitPannel",
                     "type": "Button",
-                    "id": "060273b8-29d8-4d28-b7a7-5b7f47ac7476",
+                    "id": "851903ed-bd88-471a-8ae0-0c4de9c69bd3",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
                 },
                 {
-                    "name": "InGameExitPannel",
+                    "name": "CancelSelection",
                     "type": "Button",
-                    "id": "851903ed-bd88-471a-8ae0-0c4de9c69bd3",
+                    "id": "060273b8-29d8-4d28-b7a7-5b7f47ac7476",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -209,17 +209,6 @@
                 },
                 {
                     "name": "",
-                    "id": "fa64464f-042f-45bd-942b-6a76d6d41307",
-                    "path": "<Keyboard>/escape",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "CancelSelection",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "cec6e02c-4dd4-4379-9155-a8a65c80e288",
                     "path": "<Mouse>/middleButton",
                     "interactions": "Hold(duration=0.2,pressPoint=0.2)",
@@ -303,6 +292,17 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "InGameExitPannel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "fa64464f-042f-45bd-942b-6a76d6d41307",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "CancelSelection",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

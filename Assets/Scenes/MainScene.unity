@@ -612,6 +612,20 @@ MonoBehaviour:
     audio: {fileID: 8300000, guid: 5d73156c73c9f4342a96811bc96879cb, type: 3}
   - audioName: SFX_UI_Back
     audio: {fileID: 8300000, guid: ba6946b65d612a647a684c537fc9afce, type: 3}
+  - audioName: SFX_Pop
+    audio: {fileID: 8300000, guid: ad924f691c2b95347aa4a96934f5427d, type: 3}
+  - audioName: SFX_Click
+    audio: {fileID: 8300000, guid: ff0f94832bfd6c943a81174f8cf904cc, type: 3}
+  - audioName: SFX_Place
+    audio: {fileID: 8300000, guid: 104e8af366e902547b90371289e46618, type: 3}
+  - audioName: SFX_Explosion_1
+    audio: {fileID: 8300000, guid: 7e2379d75feae4e4ba4e9775449f35e1, type: 3}
+  - audioName: SFX_Explosion_2
+    audio: {fileID: 8300000, guid: 18b5cb7c84792324fb1c1483e60f953a, type: 3}
+  - audioName: SFX_Explosion_3
+    audio: {fileID: 8300000, guid: 65056358c0ee3a048a5ba70f62e9dcda, type: 3}
+  - audioName: SFX_Explosion_4
+    audio: {fileID: 8300000, guid: 28355d70d0e041b4bb614300817f9b9d, type: 3}
 --- !u!1 &318138143
 GameObject:
   m_ObjectHideFlags: 0
