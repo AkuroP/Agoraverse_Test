@@ -45,6 +45,9 @@ public class GameManager : MonoBehaviour
     [SerializeField]private GameObject inGameExitUI;
     [SerializeField]private GameObject inGameUI;
     [SerializeField]private GameObject inGameIconUI;
+
+    public GameObject vfx;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -117,6 +120,7 @@ public class GameManager : MonoBehaviour
                 matIndex = 0;
                 ResetDroppable();
                 AudioManager.instance.PlaySFX("SFX_Place");
+                Instantiate(vfx, droppableObject.transform.position, Quaternion.identity);
                 if(alreadyPlacedObject.wasAlreadyPlaced)ResetAlreadyPlacedObject();
                 ResetVariable();
             }

@@ -920,6 +920,7 @@ MonoBehaviour:
   inGameExitUI: {fileID: 2002936053}
   inGameUI: {fileID: 729368614}
   inGameIconUI: {fileID: 2087055297}
+  vfx: {fileID: 3193864383826838676, guid: adc9c3e4b1004bd4b8e6f92eb59f40b1, type: 3}
 --- !u!1 &416207120
 GameObject:
   m_ObjectHideFlags: 0
