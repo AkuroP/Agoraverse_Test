@@ -19,7 +19,7 @@ public class GameManager : MonoBehaviour
     [Header("Zone")]
     [SerializeField]private GameObject buildingZone;
     private GameObject ground;
-
+    private Coroutine groundRotateCoroutine;
     
     private GameObject currentObject;
     private int currentIndex;
@@ -136,6 +136,7 @@ public class GameManager : MonoBehaviour
             currentMeshRenderer.material.name = allMat[matIndex].name;
             droppableObject.originalColor = allMat[matIndex].color;
             matIndex += 1;
+            AudioManager.instance.PlaySFX("SFX_Click");
         }
     }
 
@@ -187,7 +188,8 @@ public class GameManager : MonoBehaviour
         {
             Vector2 rotateDir = ctx.ReadValue<Vector2>();
             isGroundRotated = true;
-            StartCoroutine(RotateGround(rotateDir));
+            if(groundRotateCoroutine != null)StopCoroutine(groundRotateCoroutine);
+            groundRotateCoroutine = StartCoroutine(RotateGround(rotateDir));
         }
         if(ctx.canceled)
         {
