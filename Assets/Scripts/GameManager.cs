@@ -5,6 +5,9 @@ using UnityEngine.InputSystem;
 
 public class GameManager : MonoBehaviour
 {
+    [Header("Has Game Started")]
+    [SerializeField]private bool gameStarted;
+    [Space]
     [Header("List of all object")]
     [Tooltip("Drop All Prefab Object Here !")]public GameObject[] allObject;
     [Tooltip("Drop All Mat Here !")]public Material[] allMat;
@@ -35,24 +38,26 @@ public class GameManager : MonoBehaviour
 
     public Vector3 mouse;
     public Vector3 inputMouse;
+    [Space]
+    [Header("UI")]
+    [SerializeField] GameObject startUI;
+    [SerializeField]private GameObject inGameExitUI;
+    [SerializeField]private GameObject inGameUI;
+    [SerializeField]private GameObject inGameIconUI;
     // Start is called before the first frame update
     void Start()
     {
         ground = GameObject.FindGameObjectWithTag("Ground");
-    }
-
-    // Update is called once per frame
-    private void FixedUpdate()
-    {
-        
+        StartOST(5);
     }
 
     #region INPUT
 
 
-    //Create new object
+    //Action for creating new object
     public void OnCreateObject(InputAction.CallbackContext ctx)
     {
+        if(!gameStarted)return;
         if(ctx.performed && !selected)
         {
             //read name of input and convert into index
@@ -62,9 +67,10 @@ public class GameManager : MonoBehaviour
         
     }
 
-
+    //Action for reselecting/placing object
     public void OnLeftClickInteraction(InputAction.CallbackContext ctx)
     {
+        if(!gameStarted)return;
         if(ctx.performed)
         {
             //Reselect object
@@ -114,8 +120,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    //Action for changing object's material
     public void OnRightClickInteraction(InputAction.CallbackContext ctx)
     {
+        if(!gameStarted)return;
         if(ctx.performed)
         {
             if(!selected || currentObject == null)return;
@@ -129,9 +137,10 @@ public class GameManager : MonoBehaviour
     }
 
 
-    //delete selected object
+    //Action for deleting selected object
     public void OnDeleteObject(InputAction.CallbackContext ctx)
     {
+        if(!gameStarted)return;
         if(ctx.performed)
         {
             if(!selected || currentObject == null)return;
@@ -139,9 +148,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    
+    //Action for rotating object
     public void OnRotateObject(InputAction.CallbackContext ctx)
     {
+        if(!gameStarted)return;
         if(ctx.performed)
         {
             if(!selected || currentObject == null)return;
@@ -166,8 +176,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void OnRotateBuildingZone(InputAction.CallbackContext ctx)
+    //Action for rotating ground
+    public void OnRotateGround(InputAction.CallbackContext ctx)
     {
+        if(!gameStarted)return;
         if(ctx.performed)
         {
             Vector2 rotateDir = ctx.ReadValue<Vector2>();
@@ -181,9 +193,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    //Change type of rotation (Left/Right to Up/Down Rotation)
+    //Action for changing type of rotation (Left/Right to Up/Down Rotation)
     public void OnChangeRotationType(InputAction.CallbackContext ctx)
     {
+        if(!gameStarted)return;
         if(ctx.performed)
         {
             if(!selected || currentObject == null)return;
@@ -191,9 +204,10 @@ public class GameManager : MonoBehaviour
         }
     }
     
-    //Cancel selection of object
+    //Action for selecting object
     public void OnCancelSelection(InputAction.CallbackContext ctx)
     {
+        if(!gameStarted)return;
         if(ctx.performed)
         {
             if(!selected || currentObject == null)return;
@@ -219,14 +233,26 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    //Action for moving object up
     public void OnMovingObjectUp(InputAction.CallbackContext ctx)
     {
+        if(!gameStarted)return;
         if(ctx.performed)
         {
             Collider collider = droppableObject?.GetComponent<Collider>();
             if(collider == null)return;
             if(droppableObject.IsDroppable)currentObject.transform.position += new Vector3(0f, collider.bounds.size.y, 0f);
             else currentObject.transform.position += new Vector3(0f, droppableObject.allObjectIn[0].GetComponent<Collider>().bounds.size.y +.0001f, 0f);
+        }
+    }
+
+    //Action for showing exit pannel
+    public void OnInGameExitPannel(InputAction.CallbackContext ctx)
+    {
+        if(!gameStarted)return;
+        if(ctx.performed)
+        {
+            InGameExitPannel();
         }
     }
 
@@ -264,6 +290,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    //Rotate the ground
     private IEnumerator RotateGround(Vector2 dir)
     {
         while(isGroundRotated)
@@ -273,6 +300,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    //delete object
     private void DeleteObject()
     {
         placedObject.Remove(currentObject);
@@ -281,6 +309,7 @@ public class GameManager : MonoBehaviour
         if(alreadyPlacedObject.wasAlreadyPlaced)ResetAlreadyPlacedObject();
         StopCoroutine(MoveObject());
     }
+
     //check mouse position
     private Vector3 GetMousePosition()
     {
@@ -328,6 +357,7 @@ public class GameManager : MonoBehaviour
         if(selected)selected = false;
     }
 
+    //return droppable object to original
     private void ResetDroppable()
     {
         droppableObject.ReturnOriginalColor();
@@ -335,6 +365,7 @@ public class GameManager : MonoBehaviour
         droppableObject.enabled = false;
     }
 
+    //Get position & rotation of already placed object
     private void SetAlreadyPlacedObject(Vector3 pos, Quaternion rot, bool wasAlreadyPlaced)
     {
         alreadyPlacedObject.initialPos = pos;
@@ -342,6 +373,7 @@ public class GameManager : MonoBehaviour
         alreadyPlacedObject.wasAlreadyPlaced = wasAlreadyPlaced;
     }
 
+    //reset already placed object variable
     private void ResetAlreadyPlacedObject()
     {
         alreadyPlacedObject.initialPos = Vector3.zero;
@@ -350,5 +382,65 @@ public class GameManager : MonoBehaviour
     }
     #endregion
 
+
+    #region AUDIO & UI
+    //Play OST at start
+    private void StartOST(int numberOST)
+    {
+        int randomOST = Random.Range(0, (numberOST)) + 1;
+        AudioManager.instance.PlayClipAt(AudioManager.instance.allAudio[$"OST_{randomOST}"], this.transform.position, AudioManager.instance.ostMixer, false, true);
+    }
+
+    //Start the game
+    public void StartBuilding()
+    {
+        this.gameStarted = true;
+        startUI.SetActive(false);
+    }
+
+    //In Game Quit + Cancel
+    public void InGameExitPannel()
+    {
+        if(inGameExitUI.activeSelf)
+        {
+            AudioManager.instance.PlaySFX("SFX_UI_Back");
+            inGameExitUI.SetActive(false);
+        }
+        else
+        {
+            AudioManager.instance.PlaySFX("SFX_UI_Validate");
+            inGameExitUI.SetActive(true);
+        }
+    }
+
+    //Main Menu Quit
+    public void Quit()
+    {
+        Timer(AudioManager.instance.allAudio["SFX_UI_Quit"].length);
+        Application.Quit();
+    }
+
+    public void ShowHideInGameUI()
+    {
+        
+        if(inGameUI.activeSelf)
+        {
+            inGameIconUI.SetActive(true);
+            inGameUI.SetActive(false);
+        }
+        else
+        {
+            inGameUI.SetActive(true);
+            inGameIconUI.SetActive(false);
+        }
+    }
+    
+    //general timer
+    private IEnumerator Timer(float waitingTime)
+    {
+        yield return new WaitForSeconds(waitingTime);
+    }
+
+    #endregion
 }
 
